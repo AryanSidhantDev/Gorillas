@@ -28,7 +28,7 @@ function newGame(){
     };   
     
     //generate background buildings
-    for(let i=0; i<15; i++){
+    for(let i=0; i<13; i++){
         generateBackgroundBuildings(i);
     }
 
@@ -79,7 +79,13 @@ function generateBuildings(i){
     const height= platformWithGorilla? minHeightGorilla+Math.random()*(maxHeightGorilla-minHeightGorilla)
     : minHeight+Math.random()*(maxHeight-minHeight);
 
-    state.buildings.push({x,width,height});
+    const lightsOn=[];
+    for(let i=0; i<50; i++){
+        const light=Math.random()<=0.33? true:false;
+        lightsOn.push(light);
+    }
+
+    state.buildings.push({x,width,height,lightsOn});
 }
 
 function draw(){
@@ -107,8 +113,8 @@ function draw(){
 
 function drawBackground(){
     const gradient=ctx.createLinearGradient(0,0,0,window.innerHeight);
-    gradient.addColorStop(1,"#F8BA85");
-    gradient.addColorStop(0,"#F8BA85");
+    gradient.addColorStop(1,"rgba(248,186,133,1)");
+    gradient.addColorStop(0,"rgba(248,186,133,1)");
 
     //draw sky
     ctx.fillStyle=gradient;
@@ -133,5 +139,36 @@ function drawBuildings(){
     state.buildings.forEach((building) => {
         ctx.fillStyle= "rgba(160,56,256,1)";
         ctx.fillRect(building.x,0,building.width,building.height);
-    });
+    
+
+    //draw windows
+    const windowWidth=10;
+    const windowHeight=12;
+    const gap=15;
+
+    const noOfFloors=Math.ceil((building.height-gap)/(windowHeight+gap));
+    const noOfRoomsPerFloor=Math.floor((building.width-gap)/(windowWidth+gap));
+
+    for(let i=0; i<noOfFloors; i++){
+    for(let j=0; j<noOfRoomsPerFloor; j++){
+        if (building.lightsOn[i*noOfRoomsPerFloor+j]){
+            ctx.save();
+
+            ctx.translate(building.x+gap,building.height-gap);
+            ctx.scale(1,-1);
+
+            const x=j*(windowWidth+gap);
+            const y=i*(windowHeight+gap);
+
+            ctx.fillStyle="rgba(250,250,250,0.6)";
+            ctx.fillRect(x,y,windowWidth,windowHeight);
+
+            ctx.restore();
+        }
+    }
+    }
 }
+);
+}
+
+
