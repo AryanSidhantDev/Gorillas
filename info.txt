@@ -1,0 +1,17 @@
+gorillas
+1.drawing in html using canvas element
+2.drawing gorillas and bomb
+3. drawing destructible buildings
+4.drawing background
+5.how to aim
+6.how to animate
+7.detecting collision with building or gorillas
+
+
+new game()  {game state inoitializes} 
+--> draw func() 
+    -->draw background -->draw background buildings -->draw main buildings -->draw gorilla 1 and 2
+--> throw bomb func()
+--> animate()
+--> collision detection
+--> loop continues
