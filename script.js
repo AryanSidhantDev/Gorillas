@@ -27,10 +27,32 @@ function newGame(){
         blastholes:[]
     };   
     
+    //generate background buildings
+    for(let i=0; i<15; i++){
+        generateBackgroundBuildings(i);
+    }
     
     draw();
 }
 
+function generateBackgroundBuildings(i){
+    const previousbuilding=state.backgroundBuildings[i-1];
+
+    const x= previousbuilding ? previousbuilding.x + previousbuilding.width + 4: -30;
+
+    const minWidth=80;
+    const maxWidth=130;
+
+    const width = minWidth + Math.random()*(maxWidth-minWidth);
+
+
+    const minHeight=120;
+    const maxHeight=420;
+
+    const height= minHeight + Math.random()*(maxHeight-minHeight);
+
+    state.backgroundBuildings.push({x,width,height});
+}
 
 
 function draw(){
@@ -42,7 +64,7 @@ function draw(){
 
     //draw scene
     drawBackground();
-    // drawBackgroundBuildings();
+    drawBackgroundBuildings();
     // drawBuildings();
     // drawGorilla1();
     // drawGorilla2();
@@ -53,6 +75,8 @@ function draw(){
     ctx.restore();
 
 };
+
+
 
 function drawBackground(){
     const gradient=ctx.createLinearGradient(0,0,0,window.innerHeight);
@@ -70,6 +94,13 @@ function drawBackground(){
     ctx.fill();
 
 };
+
+function drawBackgroundBuildings(){
+    state.backgroundBuildings.forEach((building) => {
+        ctx.fillStyle= "rgba(160,32,240,0.6)";
+        ctx.fillRect(building.x,0,building.width,building.height);
+    });
+}
 
 
 
