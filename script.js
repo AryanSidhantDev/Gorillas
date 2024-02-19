@@ -99,16 +99,15 @@ function draw(){
     drawBackground();
     drawBackgroundBuildings();
     drawBuildings();
-    // drawGorilla1();
-    // drawGorilla2();
-    
+    drawGorilla(1);
+    drawGorilla(2);
+    // drawBomb();
 
 
     //restore transformation
     ctx.restore();
 
 };
-
 
 
 function drawBackground(){
@@ -170,5 +169,104 @@ function drawBuildings(){
 }
 );
 }
+
+function drawGorilla(player){
+    ctx.save();
+
+    const building=player===1 ? state.buildings.at(1):state.buildings.at(-2);
+
+    ctx.translate(building.x+building.width/2,building.height);
+
+    drawGorillaBody();
+    drawGorillaLeftArm(player);
+    drawGorillaRightArm(player);
+    drawGorillaFace(player);
+
+    ctx.restore();
+}
+
+function drawGorillaBody() {
+    ctx.fillStyle = "rgba(101, 67, 33, 1)";
+    
+    ctx.beginPath();
+    ctx.moveTo(0, 15);
+    ctx.lineTo(-7, 0);
+    ctx.lineTo(-20, 0);
+    ctx.lineTo(-17, 18);
+    ctx.lineTo(-20, 44);
+  
+    ctx.lineTo(-12, 78);
+    ctx.lineTo(0, 84);
+    ctx.lineTo(11, 77);
+  
+    ctx.lineTo(20, 44);
+    ctx.lineTo(17, 18);
+    ctx.lineTo(20, 0);
+    ctx.lineTo(7, 0);
+    ctx.fill();
+  }
+
+  function drawGorillaLeftArm(){
+    ctx.strokeStyle = "rgba(101, 67, 33, 1)";
+    ctx.lineWidth=18;
+
+    ctx.beginPath();
+    ctx.moveTo(-14,50);
+    
+    ctx.quadraticCurveTo(-44,45,-28,12);
+    console.log(ctx.fillStyle);
+    ctx.stroke();
+    
+  }
+
+  function drawGorillaRightArm(){
+    ctx.strokeStyle = "rgba(101, 67, 33, 1)";
+    ctx.lineWidth=18;
+
+    ctx.beginPath();
+    ctx.moveTo(14,50);
+    
+    ctx.quadraticCurveTo(44,45,28,12);
+    ctx.stroke();
+  }
+
+  function drawGorillaFace(){
+    ctx.fillStyle= "rgba(252, 191, 92,1)";
+
+    ctx.beginPath();
+    ctx.arc(0,63,9,0,2*Math.PI);
+    ctx.moveTo(-3.5,70);
+    ctx.arc(-3.5,70,4,0,2*Math.PI);
+    ctx.moveTo(+3.5, 70);
+    ctx.arc(+3.5,70,4,0,2*Math.PI);
+    ctx.fill();
+
+    // eyes
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.beginPath();
+    ctx.arc(-3.5,70,1.4,0,2*Math.PI);
+    ctx.moveTo(+3.5, 70);
+    ctx.arc(+3.5,70,1.4,0,2*Math.PI);
+    ctx.fill();
+
+    ctx.strokeStyle = "rgba(0,0,0,1)";
+    ctx.lineWidth = 1.4;
+
+    // nose
+    ctx.beginPath();
+    ctx.moveTo(-3.5,66.5);
+    ctx.lineTo(-1.5,65);
+    ctx.moveTo(3.5,66.5);
+    ctx.lineTo(1.5,65);
+    ctx.stroke();
+
+    // mouth
+    ctx.beginPath();
+    
+    ctx.moveTo(-5,56);
+    ctx.quadraticCurveTo(0,60,5,56);
+    
+    ctx.stroke();
+    }
 
 
