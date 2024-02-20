@@ -40,6 +40,8 @@ function newGame(){
     }
 
     calculateScale();
+
+    initializeBombPosition();
     
     draw();
 }
@@ -92,6 +94,23 @@ function generateBuildings(i){
     state.buildings.push({x,width,height,lightsOn});
 }
 
+function initializeBombPosition(){
+    const building= 
+    state.currentPlayer===1 ? state.buildings.at(1):state.buildings.at(-2);
+    
+    const gorillaX=building.x+building.width/2;
+    const gorillaY=building.height;
+
+    const gorillaHandOffSetX=state.currentPlayer===1? -28:28;
+    const gorillaHandOffSetY=107;
+
+    state.bomb.x=gorillaX+gorillaHandOffSetX;
+    state.bomb.y=gorillaY+gorillaHandOffSetY;
+    state.bomb.velocity.x=0;
+    state.bomb.velocity.y=0;
+
+}
+
 function draw(){
     ctx.save();
 
@@ -105,7 +124,7 @@ function draw(){
     drawBuildings();
     drawGorilla(1);
     drawGorilla(2);
-    // drawBomb();
+    drawBomb();
 
 
     //restore transformation
@@ -210,27 +229,38 @@ function drawGorillaBody() {
     ctx.fill();
   }
 
-function drawGorillaLeftArm(){
+function drawGorillaLeftArm(player){
     ctx.strokeStyle = "rgba(101, 67, 33, 1)";
     ctx.lineWidth=18;
 
     ctx.beginPath();
     ctx.moveTo(-14,50);
     
-    ctx.quadraticCurveTo(-44,45,-28,12);
-    console.log(ctx.fillStyle);
+    if(state.phase==="aiming" && state.currentPlayer===1 && player===1){
+        ctx.quadraticCurveTo(-44,63,-28 ,107 );
+      } else if(state.phase==="celebrating" && state.currentPlayer===player){
+        ctx.quadraticCurveTo(-44, 63, -28, 107);
+      } else{
+        ctx.quadraticCurveTo(-44, 45, -28, 12);
+      }
     ctx.stroke();
     
   }
 
-function drawGorillaRightArm(){
+function drawGorillaRightArm(player){
     ctx.strokeStyle = "rgba(101, 67, 33, 1)";
     ctx.lineWidth=18;
 
     ctx.beginPath();
     ctx.moveTo(14,50);
     
-    ctx.quadraticCurveTo(44,45,28,12);
+    if (state.phase==="aiming" && state.currentPlayer===2 && player===2) {
+        ctx.quadraticCurveTo(44,63,28,107);
+      }else if (state.phase==="celebrating" && state.currentPlayer===player) {
+        ctx.quadraticCurveTo(+44, 63, +28, 107);
+      }else {
+        ctx.quadraticCurveTo(+44, 45, +28, 12);
+      }
     ctx.stroke();
   }
 
@@ -273,6 +303,19 @@ function drawGorillaFace(){
     ctx.stroke();
 }
 
+function drawBomb(){
+    ctx.save();
+    ctx.translate(state.bomb.x,state.bomb.y);
+
+    //draw circle indicating bomb
+    ctx.fillStyle="rgba(256,256,256,1)"
+    ctx.beginPath();
+    ctx.arc(0,0,10,0,2*Math.PI);
+    ctx.fill();
+
+    ctx.restore();
+}
+
 function calculateScale(){
     const lastBuilding=state.backgroundBuildings.at(-1);
     const totalWidth=lastBuilding.x+lastBuilding.width;
@@ -286,3 +329,4 @@ window.addEventListener("resize",()=>{
     calculateScale();
     draw();
 })
+
