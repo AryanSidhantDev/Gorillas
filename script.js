@@ -24,11 +24,13 @@ function newGame(){
         //buildings
         backgroundBuildings:[],
         buildings:[],
-        blastholes:[]
+        blastholes:[],
+        
+        scale:1,
     };   
     
     //generate background buildings
-    for(let i=0; i<13; i++){
+    for(let i=0; i<11; i++){
         generateBackgroundBuildings(i);
     }
 
@@ -36,6 +38,8 @@ function newGame(){
     for(let i=0; i<8; i++){
         generateBuildings(i);
     }
+
+    calculateScale();
     
     draw();
 }
@@ -62,7 +66,7 @@ function generateBackgroundBuildings(i){
 function generateBuildings(i){
     const previousbuilding=state.buildings[i-1];
 
-    const x= previousbuilding ? previousbuilding.x + previousbuilding.width + 4: 200;
+    const x= previousbuilding ? previousbuilding.x + previousbuilding.width + 4: 170;
 
     const minWidth=80;
     const maxWidth=130;
@@ -94,7 +98,7 @@ function draw(){
     //flip coordinate system upside down
     ctx.translate(0,window.innerHeight);
     ctx.scale(1,-1);
-
+    ctx.scale(state.scale,state.scale);
     //draw scene
     drawBackground();
     drawBackgroundBuildings();
@@ -111,18 +115,18 @@ function draw(){
 
 
 function drawBackground(){
-    const gradient=ctx.createLinearGradient(0,0,0,window.innerHeight);
+    const gradient=ctx.createLinearGradient(0,0,0,window.innerHeight/state.scale);
     gradient.addColorStop(1,"rgba(248,186,133,1)");
     gradient.addColorStop(0,"rgba(248,186,133,1)");
 
     //draw sky
     ctx.fillStyle=gradient;
-    ctx.fillRect(0,0,window.innerWidth,window.innerHeight);
+    ctx.fillRect(0,0,window.innerWidth/state.scale,window.innerHeight/state.scale);
 
     //draw moon
     ctx.fillStyle="rgba(255,255,255,0.6)";
     ctx.beginPath();
-    ctx.arc(400,600,80,0,2*Math.PI);
+    ctx.arc(400,470,50,0,2*Math.PI);
     ctx.fill();
 
 };
@@ -206,7 +210,7 @@ function drawGorillaBody() {
     ctx.fill();
   }
 
-  function drawGorillaLeftArm(){
+function drawGorillaLeftArm(){
     ctx.strokeStyle = "rgba(101, 67, 33, 1)";
     ctx.lineWidth=18;
 
@@ -219,7 +223,7 @@ function drawGorillaBody() {
     
   }
 
-  function drawGorillaRightArm(){
+function drawGorillaRightArm(){
     ctx.strokeStyle = "rgba(101, 67, 33, 1)";
     ctx.lineWidth=18;
 
@@ -230,7 +234,7 @@ function drawGorillaBody() {
     ctx.stroke();
   }
 
-  function drawGorillaFace(){
+function drawGorillaFace(){
     ctx.fillStyle= "rgba(252, 191, 92,1)";
 
     ctx.beginPath();
@@ -267,6 +271,18 @@ function drawGorillaBody() {
     ctx.quadraticCurveTo(0,60,5,56);
     
     ctx.stroke();
-    }
+}
 
+function calculateScale(){
+    const lastBuilding=state.backgroundBuildings.at(-1);
+    const totalWidth=lastBuilding.x+lastBuilding.width;
 
+    state.scale=window.innerWidth/totalWidth;
+}
+
+window.addEventListener("resize",()=>{
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+    calculateScale();
+    draw();
+})
