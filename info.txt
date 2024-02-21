@@ -10,8 +10,9 @@ gorillas
 
 new game()  {game state inoitializes} 
 --> draw func() 
-    -->draw background -->draw background buildings -->draw main buildings -->draw gorilla 1 and 2
+    -->draw background -->draw background buildings -->draw main buildings -->draw gorilla 1 and 2-->draw bomb
+--> aiming
 --> throw bomb func()
 --> animation func()
---> collision detection(either to another gorilla or building)
+--> collision detection(either to another gorilla or building or bomb goes outside)
 --> loop continues

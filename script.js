@@ -1,11 +1,26 @@
 let state={};
-
+let isDragging = false;
+let dragStartX = undefined;
+let dragStartY = undefined;
 
 
 const canvas=document.getElementById("game");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 const ctx=canvas.getContext("2d");
+
+//left info panel
+const info1DOM = document.getElementById("info-left");
+const angle1DOM=info1DOM.querySelector('.angle');
+const velocity1DOM=info1DOM.querySelector('.velocity');
+
+//right info panel
+const info2DOM = document.getElementById("info-right");
+const angle2DOM=info2DOM.querySelector('.angle');
+const velocity2DOM=info2DOM.querySelector('.velocity');
+
+//bomb-grab-area
+const bombGrabAreaDOM=document.getElementById("bomb-grab-area");
 
 newGame();
 
@@ -108,7 +123,14 @@ function initializeBombPosition(){
     state.bomb.y=gorillaY+gorillaHandOffSetY;
     state.bomb.velocity.x=0;
     state.bomb.velocity.y=0;
+    state.bomb.rotation=0;
 
+    //initialize the position of bomb grab area
+    const grabAreaRadius=15;
+    const left=state.bomb.x*state.scale-grabAreaRadius;
+    const bottom=state.bomb.y*state.scale-grabAreaRadius;
+    bombGrabAreaDOM.style.left=`${left}px`;
+    bombGrabAreaDOM.style.bottom=`${bottom}px`;
 }
 
 function draw(){
@@ -209,7 +231,7 @@ function drawGorilla(player){
 }
 
 function drawGorillaBody() {
-    ctx.fillStyle = "rgba(101, 67, 33, 1)";
+    ctx.fillStyle = "rgba(0,0,0,1)";
     
     ctx.beginPath();
     ctx.moveTo(0, 15);
@@ -230,14 +252,14 @@ function drawGorillaBody() {
   }
 
 function drawGorillaLeftArm(player){
-    ctx.strokeStyle = "rgba(101, 67, 33, 1)";
+    ctx.strokeStyle = "rgba(0,0,0,1)";
     ctx.lineWidth=18;
 
     ctx.beginPath();
     ctx.moveTo(-14,50);
     
     if(state.phase==="aiming" && state.currentPlayer===1 && player===1){
-        ctx.quadraticCurveTo(-44,63,-28 ,107 );
+        ctx.quadraticCurveTo(-44,63,-28- state.bomb.velocity.x / 6.25 ,107- state.bomb.velocity.y / 6.25 );
       } else if(state.phase==="celebrating" && state.currentPlayer===player){
         ctx.quadraticCurveTo(-44, 63, -28, 107);
       } else{
@@ -248,14 +270,14 @@ function drawGorillaLeftArm(player){
   }
 
 function drawGorillaRightArm(player){
-    ctx.strokeStyle = "rgba(101, 67, 33, 1)";
+    ctx.strokeStyle = "rgba(0,0,0,1)";
     ctx.lineWidth=18;
 
     ctx.beginPath();
     ctx.moveTo(14,50);
     
     if (state.phase==="aiming" && state.currentPlayer===2 && player===2) {
-        ctx.quadraticCurveTo(44,63,28,107);
+        ctx.quadraticCurveTo(44,63,28- state.bomb.velocity.x / 6.25,107- state.bomb.velocity.y / 6.25);
       }else if (state.phase==="celebrating" && state.currentPlayer===player) {
         ctx.quadraticCurveTo(+44, 63, +28, 107);
       }else {
@@ -264,9 +286,9 @@ function drawGorillaRightArm(player){
     ctx.stroke();
   }
 
-function drawGorillaFace(){
-    ctx.fillStyle= "rgba(252, 191, 92,1)";
-
+function drawGorillaFace(player){
+    ctx.fillStyle= "rgba(169, 169, 169, 1)";
+    
     ctx.beginPath();
     ctx.arc(0,63,9,0,2*Math.PI);
     ctx.moveTo(-3.5,70);
@@ -297,8 +319,13 @@ function drawGorillaFace(){
     // mouth
     ctx.beginPath();
     
-    ctx.moveTo(-5,56);
-    ctx.quadraticCurveTo(0,60,5,56);
+    if (state.phase==="celebrating" && state.currentPlayer===player){
+        ctx.moveTo(-5, 60);
+        ctx.quadraticCurveTo(0, 56, 5, 60);
+      } else {
+        ctx.moveTo(-5, 56);
+        ctx.quadraticCurveTo(0, 60, 5, 56);
+      }
     
     ctx.stroke();
 }
@@ -307,8 +334,11 @@ function drawBomb(){
     ctx.save();
     ctx.translate(state.bomb.x,state.bomb.y);
 
+    if(state.phase==="aiming"){
+        ctx.translate(-state.bomb.velocity.x/6.25,-state.bomb.velocity.y/6.25);
+    }
     //draw circle indicating bomb
-    ctx.fillStyle="rgba(256,256,256,1)"
+    ctx.fillStyle="rgba(0,100,0,1)"
     ctx.beginPath();
     ctx.arc(0,0,10,0,2*Math.PI);
     ctx.fill();
@@ -330,3 +360,51 @@ window.addEventListener("resize",()=>{
     draw();
 })
 
+
+
+
+// event handlers
+bombGrabAreaDOM.addEventListener("mousedown",function(e){
+    if(state.phase==="aiming"){
+      isDragging=true;
+      dragStartX=e.clientX;
+      dragStartY=e.clientY;
+      document.body.style.cursor="grab";
+    }
+});
+  
+window.addEventListener("mousemove",function(e){
+    if(isDragging){
+      let deltaX=e.clientX-dragStartX;
+      let deltaY=e.clientY-dragStartY;
+      
+      state.bomb.velocity.x=-deltaX;
+      state.bomb.velocity.y= deltaY;
+      setInfo(deltaX,deltaY);
+        
+      document.body.style.cursor="grab";
+      draw();
+    }
+});  
+
+// see value on info
+function setInfo(deltaX,deltaY){
+    const hypotenuse = Math.sqrt(deltaX**2 + deltaY**2);
+    const angleInRadians = Math.asin(deltaY / hypotenuse);
+    const angleInDegrees = (angleInRadians/ Math.PI  )* 180;
+
+    if (state.currentPlayer===1){
+        angle1DOM.innerText = Math.round(angleInDegrees);
+        velocity1DOM.innerText = Math.round(hypotenuse);
+    } else{
+        angle2DOM.innerText = Math.round(angleInDegrees);
+        velocity2DOM.innerText = Math.round(hypotenuse);
+    }
+}
+window.addEventListener("mouseup",function(){
+    if(isDragging){
+        isDragging=false;
+        document.body.style.cursor="default";
+        // throwBomb();
+    }
+});
