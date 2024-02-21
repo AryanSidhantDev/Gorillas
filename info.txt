@@ -16,3 +16,12 @@ new game()  {game state inoitializes}
 --> animation func()
 --> collision detection(either to another gorilla or building or bomb goes outside)
 --> loop continues
+
+
+Problem:
+-->angle1DOM showing null value during aiming feature addition
+Solution:
+const angle1DOM = document.querySelector("#info-left .angle");
+//changed to
+const info1DOM = document.getElementById("info-left");
+const angle1DOM=info1DOM.querySelector('.angle');

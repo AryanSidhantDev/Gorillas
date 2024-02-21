@@ -336,6 +336,15 @@ function drawBomb(){
 
     if(state.phase==="aiming"){
         ctx.translate(-state.bomb.velocity.x/6.25,-state.bomb.velocity.y/6.25);
+
+    //drawing bomb trajectory to justify speed
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+    ctx.setLineDash([3, 8]);
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(state.bomb.velocity.x, state.bomb.velocity.y);
+    ctx.stroke();
     }
     //draw circle indicating bomb
     ctx.fillStyle="rgba(0,100,0,1)"
