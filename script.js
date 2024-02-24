@@ -340,12 +340,13 @@ function drawBomb(){
     //drawing bomb trajectory to justify speed
     ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
     ctx.setLineDash([3, 8]);
-    ctx.lineWidth = 10;
+    ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(state.bomb.velocity.x, state.bomb.velocity.y);
     ctx.stroke();
-    }
+ }   
+    
     //draw circle indicating bomb
     ctx.fillStyle="rgba(0,100,0,1)"
     ctx.beginPath();
@@ -414,6 +415,47 @@ window.addEventListener("mouseup",function(){
     if(isDragging){
         isDragging=false;
         document.body.style.cursor="default";
-        // throwBomb();
+        throwBomb();
     }
 });
+
+function throwBomb(){
+    state.phase="inFlight";
+    previousAnimationTimestamp=undefined;
+    requestAnimationFrame(animate);
+}
+
+function animate(timestamp){
+    
+    if(previousAnimationTimestamp===undefined){
+        previousAnimationTimestamp=timestamp;
+        requestAnimationFrame(animate);
+        return;
+    }
+
+    const elapsedTime=timestamp-previousAnimationTimestamp;
+
+    moveBomb(elapsedTime);
+
+    const miss= false;
+    const hit =false;
+
+    if(miss){
+        return;
+    }
+    if(hit){
+        return;
+    }
+
+    draw();
+    previousAnimationTimestamp=timestamp;
+    requestAnimationFrame(animate);
+}
+
+function moveBomb(elapsedTime){ 
+    const multiplier=elapsedTime/450;
+    state.bomb.velocity.y-=20*multiplier;
+    state.bomb.x+=state.bomb.velocity.x*multiplier;
+    state.bomb.y+=state.bomb.velocity.y*multiplier;
+}
+
