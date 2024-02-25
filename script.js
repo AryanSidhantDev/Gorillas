@@ -452,7 +452,7 @@ function animate(timestamp){
 
     moveBomb(elapsedTime);
 
-    const miss= checkFrameHit() || false;
+    const miss= checkFrameHit() || checkBuildingHit();
     const hit =false;
 
     if(miss){
@@ -489,3 +489,18 @@ function checkFrameHit() {
       return true; 
     }
 }
+
+function checkBuildingHit() {
+    for (let i = 0; i < state.buildings.length; i++) {
+      const building = state.buildings[i];
+      if (
+        state.bomb.x + 4 > building.x &&
+        state.bomb.x - 4 < building.x + building.width &&
+        state.bomb.y - 4 < 0 + building.height
+      ) {
+        state.blastholes.push({x:state.bomb.x, y:state.bomb.y});
+        return true;
+      }
+  }
+}          
+  
