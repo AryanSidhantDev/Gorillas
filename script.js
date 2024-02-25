@@ -452,8 +452,8 @@ function animate(timestamp){
 
     moveBomb(elapsedTime);
 
-    const miss= checkFrameHit() || checkBuildingHit();
-    const hit =false;
+    const miss= checkFrameHit() || false;
+    const hit = checkGorillaHit();
 
     if(miss){
         state.currentPlayer=state.currentPlayer===1? 2:1;
@@ -463,7 +463,8 @@ function animate(timestamp){
         return;
     }
     if(hit){
-        return;
+        state.phase="celebrating";
+        draw();
     }
 
     draw();
@@ -502,5 +503,33 @@ function checkBuildingHit() {
         return true;
       }
   }
-}          
+}  
+
+function checkGorillaHit() {
+    const enemyPlayer = state.currentPlayer === 1 ? 2 : 1;
+    const enemyBuilding =enemyPlayer === 1
+        ? state.buildings.at(1) 
+        : state.buildings.at(-2); 
+    ctx.save();
+    ctx.translate(
+      enemyBuilding.x + enemyBuilding.width / 2,
+      enemyBuilding.height
+    );
+    drawGorillaBody();
+    let hit = ctx.isPointInPath(state.bomb.x, state.bomb.y);
+  
+    drawGorillaLeftArm(enemyPlayer);
+    hit ||= ctx.isPointInStroke(state.bomb.x, state.bomb.y);
+  
+    drawGorillaRightArm(enemyPlayer);
+    hit ||= ctx.isPointInStroke(state.bomb.x, state.bomb.y);
+    ctx.restore();
+    return hit;
+}
+  
+    
+  
+    
+  
+    
   
