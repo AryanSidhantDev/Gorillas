@@ -345,14 +345,29 @@ function drawBomb(){
     ctx.moveTo(0, 0);
     ctx.lineTo(state.bomb.velocity.x, state.bomb.velocity.y);
     ctx.stroke();
- }   
+    
     
     //draw circle indicating bomb
     ctx.fillStyle="rgba(0,100,0,1)"
     ctx.beginPath();
     ctx.arc(0,0,10,0,2*Math.PI);
     ctx.fill();
-
+}
+    else if(state.phase==="inFlight"){
+        ctx.fillStyle="rgba(0,100,0,1)";
+        ctx.rotate(state.bomb.rotation);
+        ctx.beginPath();
+        ctx.moveTo(-8,-2);
+        ctx.quadraticCurveTo(0,12,8,-2);
+        ctx.quadraticCurveTo(0,2,-8,-2);
+        ctx.fill();
+    }
+    else{
+        ctx.fillStyle="rgba(0,100,0,1)"
+        ctx.beginPath();
+        ctx.arc(0,0,6,0,2*Math.PI);
+        ctx.fill();
+    }
     ctx.restore();
 }
 
@@ -437,10 +452,14 @@ function animate(timestamp){
 
     moveBomb(elapsedTime);
 
-    const miss= false;
+    const miss= checkFrameHit() || false;
     const hit =false;
 
     if(miss){
+        state.currentPlayer=state.currentPlayer===1? 2:1;
+        state.phase="aiming";
+        initializeBombPosition();
+        draw();
         return;
     }
     if(hit){
@@ -453,9 +472,20 @@ function animate(timestamp){
 }
 
 function moveBomb(elapsedTime){ 
-    const multiplier=elapsedTime/450;
+    const multiplier=elapsedTime/400;
     state.bomb.velocity.y-=20*multiplier;
     state.bomb.x+=state.bomb.velocity.x*multiplier;
     state.bomb.y+=state.bomb.velocity.y*multiplier;
+
+    //rotation to bomb
+    const direction=1;
+    state.bomb.rotation+=direction*5*multiplier;
 }
 
+function checkFrameHit() {
+    if (
+      state.bomb.y<0 || state.bomb.x<-state.shift/state.scale || state.bomb.x > (window.innerWidth - state.shift) / state.scale
+    ) {
+      return true; 
+    }
+}
