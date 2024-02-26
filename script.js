@@ -13,11 +13,13 @@ const ctx=canvas.getContext("2d");
 const info1DOM = document.getElementById("info-left");
 const angle1DOM=info1DOM.querySelector('.angle');
 const velocity1DOM=info1DOM.querySelector('.velocity');
+const points1DOM=info1DOM.querySelector('.points');
 
 //right info panel
 const info2DOM = document.getElementById("info-right");
 const angle2DOM=info2DOM.querySelector('.angle');
 const velocity2DOM=info2DOM.querySelector('.velocity');
+const points2DOM=info2DOM.querySelector('.points');
 
 //bomb-grab-area
 const bombGrabAreaDOM=document.getElementById("bomb-grab-area");
@@ -464,7 +466,28 @@ function animate(timestamp){
     }
     if(hit){
         state.phase="celebrating";
+        updatePoints();
         draw();
+        function celebration(){
+            return new Promise((resolve,reject)=>{
+                setTimeout(()=>{
+                    console.log("resuming...");
+                    resolve();
+                },2000);
+            });
+        }
+        
+        async function pausing(){
+            console.log("pausing...")
+            await celebration();
+            state.currentPlayer=state.currentPlayer===1? 2:1;
+            state.phase="aiming";
+            initializeBombPosition();
+            draw();
+        }
+        pausing();
+        
+        return;
     }
 
     draw();
@@ -527,6 +550,22 @@ function checkGorillaHit() {
     return hit;
 }
   
+function updatePoints(){
+    state.currentPlayer=state.currentPlayer===1? 1:2;
+        if(state.currentPlayer===1){
+            const currentPoints=parseInt(points1DOM.innerText);
+            const updatedPoints=currentPoints+1;
+            points1DOM.innerText=updatedPoints;
+        }
+        else{
+            const currentPoints=parseInt(points2DOM.innerText);
+            const updatedPoints=currentPoints+1;
+            points2DOM.innerText=updatedPoints;
+        }
+}        
+            
+
+
     
   
     

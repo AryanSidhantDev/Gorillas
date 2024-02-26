@@ -15,13 +15,19 @@ new game()  {game state inoitializes}
 --> throw bomb func()
 --> animation func()
 --> collision detection(either to another gorilla or building or bomb goes outside)
+--> points updated as necessary
 --> loop continues
 
 
-Problem:
+Problem(1):
 -->angle1DOM showing null value during aiming feature addition
 Solution:
 const angle1DOM = document.querySelector("#info-left .angle");
 //changed to
 const info1DOM = document.getElementById("info-left");
 const angle1DOM=info1DOM.querySelector('.angle');
+
+Problem(2):
+-->after hitting enemy gorilla celebrating gorilla face was not showing
+Solution:
+async-await function implemented
