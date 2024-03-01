@@ -1,3 +1,8 @@
+const newgame=document.getElementById("new");
+newgame.addEventListener("click", function() {
+    newGame(); 
+});
+
 let state={};
 let isDragging = false;
 let dragStartX = undefined;
@@ -23,6 +28,8 @@ const points2DOM=info2DOM.querySelector('.points');
 
 //bomb-grab-area
 const bombGrabAreaDOM=document.getElementById("bomb-grab-area");
+//wind speed
+const windSpeedDOM=document.getElementById("wind-speed");
 
 newGame();
 
@@ -37,7 +44,7 @@ function newGame(){
             rotation:0,
             velocity:{x:0,y:0}
         },
-
+        windSpeed:generateWindSpeed(),
         //buildings
         backgroundBuildings:[],
         buildings:[],
@@ -133,6 +140,8 @@ function initializeBombPosition(){
     const bottom=state.bomb.y*state.scale-grabAreaRadius;
     bombGrabAreaDOM.style.left=`${left}px`;
     bombGrabAreaDOM.style.bottom=`${bottom}px`;
+
+    windSpeedDOM.innerText=state.windSpeed;
 }
 
 function draw(){
@@ -155,7 +164,6 @@ function draw(){
     ctx.restore();
 
 };
-
 
 function drawBackground(){
     const gradient=ctx.createLinearGradient(0,0,0,window.innerHeight/state.scale);
@@ -362,7 +370,6 @@ function drawBomb(){
     ctx.lineTo(state.bomb.velocity.x, state.bomb.velocity.y);
     ctx.stroke();
     
-    
     //draw circle indicating bomb
     ctx.fillStyle="rgba(0,100,0,1)"
     ctx.beginPath();
@@ -400,8 +407,6 @@ window.addEventListener("resize",()=>{
     calculateScale();
     draw();
 })
-
-
 
 
 // event handlers
@@ -513,6 +518,7 @@ function animate(timestamp){
 
 function moveBomb(elapsedTime){ 
     const multiplier=elapsedTime/200;
+    state.bomb.velocity.x+=state.windSpeed*multiplier;
     state.bomb.velocity.y-=20*multiplier;
     state.bomb.x+=state.bomb.velocity.x*multiplier;
     state.bomb.y+=state.bomb.velocity.y*multiplier;
@@ -589,9 +595,14 @@ function updatePoints(){
             const updatedPoints=currentPoints+1;
             points2DOM.innerText=updatedPoints;
         }
+        const newWindSpeed=generateWindSpeed();
+        windSpeedDOM.innerText=newWindSpeed;
+        state.windSpeed=newWindSpeed;
 }        
             
-
+function generateWindSpeed() {
+    return parseInt(-10 + Math.random() * 20);
+}
 
     
   

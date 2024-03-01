@@ -7,18 +7,46 @@ body{
     -webkit-user-select: none;
 }
 
+#new{
+    position: absolute;
+    top: 20px;
+    left: 45vw;
+    width: 10vw;
+    text-align: center;
+    border: 3px solid rgb(153, 0, 255);
+    background-color: white;
+    cursor: pointer;
+}
+
 #info-left{
     position: absolute;
     top: 20px;
     left: 35px;
+    width: 100px;
+    text-align: center;
+    border: 3px solid rgb(153, 0, 255);
+    background-color: white;
 }
 
 #info-right{
     position: absolute;
     top: 20px;
     right: 35px;
-    text-align: right;
+    width: 100px;
+    text-align: center;
+    border: 3px solid rgb(153, 0, 255);
+    background-color: white;
 }
+
+#wind-info{
+    position: absolute;
+    bottom: 15px;
+    left: 50vw;
+    width: 100px;
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+  }
 
 #bomb-grab-area{
     position: absolute;
