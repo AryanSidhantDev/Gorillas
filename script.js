@@ -2,7 +2,7 @@ let state={};
 let isDragging = false;
 let dragStartX = undefined;
 let dragStartY = undefined;
-
+const blastHoleRadius = 18;
 
 const canvas=document.getElementById("game");
 canvas.width=window.innerWidth;
@@ -41,7 +41,7 @@ function newGame(){
         //buildings
         backgroundBuildings:[],
         buildings:[],
-        blastholes:[],
+        blastHoles:[],
         
         scale:1,
     };   
@@ -145,7 +145,7 @@ function draw(){
     //draw scene
     drawBackground();
     drawBackgroundBuildings();
-    drawBuildings();
+    drawBuildingsWithBlastHoles();
     drawGorilla(1);
     drawGorilla(2);
     drawBomb();
@@ -179,6 +179,20 @@ function drawBackgroundBuildings(){
         ctx.fillStyle= "rgba(160,32,240,0.6)";
         ctx.fillRect(building.x,0,building.width,building.height);
     });
+}
+
+function drawBuildingsWithBlastHoles() {
+    ctx.save();
+  
+    state.blastHoles.forEach((blastHole) => {
+      ctx.beginPath();
+      ctx.rect(0,0,window.innerWidth/state.scale,window.innerHeight/state.scale);
+      ctx.arc(blastHole.x, blastHole.y, blastHoleRadius, 0, 2 * Math.PI, true);
+      ctx.clip();
+    });
+  
+    drawBuildings();
+    ctx.restore();
 }
 
 function drawBuildings(){
@@ -451,10 +465,12 @@ function animate(timestamp){
     }
 
     const elapsedTime=timestamp-previousAnimationTimestamp;
+    const hitDetectionAccuracy=10;
+    for(let i=0; i<hitDetectionAccuracy; i++){
 
-    moveBomb(elapsedTime);
+    moveBomb(elapsedTime/hitDetectionAccuracy);
 
-    const miss= checkFrameHit() || false;
+    const miss= checkFrameHit() || checkBuildingHit();
     const hit = checkGorillaHit();
 
     if(miss){
@@ -489,14 +505,14 @@ function animate(timestamp){
         
         return;
     }
-
+    }
     draw();
     previousAnimationTimestamp=timestamp;
     requestAnimationFrame(animate);
 }
 
 function moveBomb(elapsedTime){ 
-    const multiplier=elapsedTime/400;
+    const multiplier=elapsedTime/200;
     state.bomb.velocity.y-=20*multiplier;
     state.bomb.x+=state.bomb.velocity.x*multiplier;
     state.bomb.y+=state.bomb.velocity.y*multiplier;
@@ -522,8 +538,19 @@ function checkBuildingHit() {
         state.bomb.x - 4 < building.x + building.width &&
         state.bomb.y - 4 < 0 + building.height
       ) {
-        state.blastholes.push({x:state.bomb.x, y:state.bomb.y});
-        return true;
+      for (let j = 0; j < state.blastHoles.length; j++) {
+        const blastHole = state.blastHoles[j];
+
+        const horizontalDistance = state.bomb.x - blastHole.x;
+        const verticalDistance = state.bomb.y - blastHole.y;
+        const distance = Math.sqrt(
+          horizontalDistance ** 2 + verticalDistance ** 2);
+        if (distance < blastHoleRadius) {
+          return false;
+        }
+      }  
+      state.blastHoles.push({ x: state.bomb.x, y: state.bomb.y });
+      return true; 
       }
   }
 }  
