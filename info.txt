@@ -31,3 +31,8 @@ Problem(2):
 -->after hitting enemy gorilla celebrating gorilla face was not showing
 Solution:
 async-await function implemented
+
+Problem(3):
+-->after the first hit , a player may take note of the present angle and speed and continue hitting his opponent
+Solution:
+change of windspeed after each hit: maintains relevance of points
