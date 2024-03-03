@@ -1,2 +1,3 @@
-![image](https://github.com/AryanSidhantDev/Gorillas/assets/154079433/f1a35f09-8a13-4c4d-9283-716219c25899)
+![image](https://github.com/AryanSidhantDev/Gorillas-JavascriptGame/assets/154079433/53eb2375-a3a5-4a0e-b1a6-3c73c4286ad4)
+
 
