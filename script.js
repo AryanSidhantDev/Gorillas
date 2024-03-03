@@ -1,6 +1,17 @@
-const newgame=document.getElementById("new");
-newgame.addEventListener("click", function() {
+const reset=document.getElementById("new1");
+reset.addEventListener("click", function() {
     newGame(); 
+});
+
+const newG=document.getElementById("new2");
+newG.addEventListener("click",function(){
+    newGame();
+    angle1DOM.innerText=0;
+    angle2DOM.innerText=0;
+    velocity1DOM.innerText=0;
+    velocity2DOM.innerText=0;
+    points1DOM.innerText=0;
+    points2DOM.innerText=0;
 });
 
 let state={};

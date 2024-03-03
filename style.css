@@ -7,7 +7,18 @@ body{
     -webkit-user-select: none;
 }
 
-#new{
+#new1{
+    position: absolute;
+    top: 20px;
+    left: 30vw;
+    width: 10vw;
+    text-align: center;
+    border: 3px solid rgb(153, 0, 255);
+    background-color: white;
+    cursor: pointer;
+}
+
+#new2{
     position: absolute;
     top: 20px;
     left: 45vw;
